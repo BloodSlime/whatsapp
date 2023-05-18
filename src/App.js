@@ -1,23 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
+import AvailableChats from "./AvailableChats";
+import AuthPage from "./AuthPage";
+import axios from "axios";
 
 function App() {
+  const [isLogin, setIsLogin] = useState(false);
+  const [idInstance, setIdInstance] = useState("");
+  const [apiToken, setApiToken] = useState("");
+
+  const handleLogin = async () => {
+    await axios
+      .post(
+        `https://api.green-api.com/waInstance${idInstance}/setSettings/${apiToken}`
+      )
+      .then(setIsLogin(true));
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="container">
+        {!isLogin ? (
+          <AuthPage
+            idInstance={idInstance}
+            apiToken={apiToken}
+            setIdInstance={setIdInstance}
+            setApiToken={setApiToken}
+            handleLogin={handleLogin}
+          />
+        ) : (
+          <AvailableChats idInstance={idInstance} apiToken={apiToken} />
+        )}
+      </div>
     </div>
   );
 }
